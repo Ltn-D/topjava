@@ -2,8 +2,6 @@ package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
-import ru.javawebinar.topjava.repository.InMemoryMealsRepositoryImpl;
-import ru.javawebinar.topjava.repository.MealsRepository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -12,16 +10,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MealsUtil {
-    public static final int caloriesPerDay = 2000;
-    public static void main(String[] args) {
-        MealsRepository repository = new InMemoryMealsRepositoryImpl();
-        List<Meal> meals = repository.findAll();
+    public static final int CALORIES_PER_DAY = 2000;
 
-        List<MealTo> mealsTo = filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), caloriesPerDay);
-        mealsTo.forEach(System.out::println);
-    }
-
-    public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int CALORIES_PER_DAY) {
         Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
@@ -30,7 +21,7 @@ public class MealsUtil {
 
         return meals.stream()
                 .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime))
-                .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
+                .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > CALORIES_PER_DAY))
                 .collect(Collectors.toList());
     }
 
@@ -38,7 +29,7 @@ public class MealsUtil {
         return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 
-    public static List<MealTo> getAll (List<Meal> meals){
-        return filteredByStreams(meals, LocalTime.of(0, 0), LocalTime.of(23, 59), caloriesPerDay);
-    }
+//    public static List<MealTo> getAll (List<Meal> meals){
+//        return filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
+//    }
 }

@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: 111
-  Date: 06.02.2026
-  Time: 20:45
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -32,14 +25,15 @@
         <th>Calories</th>
         <th>Operation</th>
     </tr>
-    <jsp:useBean id="allMeals" scope="request" type="java.util.List"/>
+<%--    <jsp:useBean id="allMeals" scope="request" type="java.util.List"/>--%>
     <c:forEach var="mealTo" items="${allMeals}">
-        <tr>
-            <td><span class=${mealTo.excess?'excessTrue':'excessFalse'}>${mealTo.dateTime}</td>
-            <td><span class=${mealTo.excess?'excessTrue':'excessFalse'}>${mealTo.description}</td>
-            <td><span class=${mealTo.excess?'excessTrue':'excessFalse'}>${mealTo.calories}</td>
-            <td><a href="${pageContext.request.contextPath}/meals?action=edit&mealId=${mealTo.id}">Update</a></td>
-            <td><a href="${pageContext.request.contextPath}/meals?action=delete&mealId=${mealTo.id}">Delete</a></td>
+    <tr class="${mealTo.excess?'excessTrue':'excessFalse'}">
+
+            <td>${(mealTo.dateTime).format(FORMATTER)}</td>
+            <td>${mealTo.description}</td>
+            <td>${mealTo.calories}</td>
+            <td><a href="${pageContext.request.contextPath}/meals?action=edit&id=${mealTo.id}">Update</a></td>
+            <td><a href="${pageContext.request.contextPath}/meals?action=delete&id=${mealTo.id}">Delete</a></td>
         </tr>
     </c:forEach>
 </table>

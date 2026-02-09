@@ -6,12 +6,12 @@ import java.util.List;
 
 public interface MealsRepository {
 
-     List<Meal> findAll();
+    List<Meal> findAll();
 
-    Meal findById(Integer mealId);
+    Meal findById(int id);
 
-    void save(Meal meal);
+    Meal save(Meal meal);
 
-    void deleteByID(Integer mealId);
+    void deleteById(int id);
 
 }
