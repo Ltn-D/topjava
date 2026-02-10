@@ -23,7 +23,7 @@
         <th>Date</th>
         <th>Description</th>
         <th>Calories</th>
-        <th>Operation</th>
+        <th colspan="2">Operation</th>
     </tr>
 <%--    <jsp:useBean id="allMeals" scope="request" type="java.util.List"/>--%>
     <c:forEach var="mealTo" items="${allMeals}">
