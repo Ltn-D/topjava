@@ -7,9 +7,7 @@ public class SecurityUtil {
 
     public static void setAuthUserId(int userId) {
         id = userId;
-        System.out.println(id);
     }
-
 
     public static int authUserId() {
         return id;

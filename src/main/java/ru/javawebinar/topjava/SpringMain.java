@@ -2,11 +2,14 @@ package ru.javawebinar.topjava;
 
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Arrays;
 
 public class SpringMain {
@@ -17,12 +20,11 @@ public class SpringMain {
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
-            mealRestController.getAll(1).forEach(System.out::println);
-            mealRestController.getAll(2).forEach(System.out::println);
-            adminUserController.getAll().forEach(System.out::println);
-//            Meal meal = mealRestController.get(2, 2);
-//            System.out.println(meal);
-
+            mealRestController.getAll().forEach(System.out::println);
+            mealRestController.getAll().forEach(System.out::println);
+            mealRestController.update(new Meal((LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0)),
+                    "Обед", 200),6);
+            mealRestController.getAll().forEach(System.out::println);
         }
     }
 }

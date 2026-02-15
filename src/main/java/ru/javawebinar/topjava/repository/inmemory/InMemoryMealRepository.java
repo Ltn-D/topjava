@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -17,15 +18,13 @@ import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
-    private Map<Integer, Meal> mealsMap;
+    public static final int ADMIN_ID = 1;
+
+    public static final int USER_ID = 2;
 
     private final Map<Integer, Map<Integer, Meal>> userMealsMap = new ConcurrentHashMap<>();
 
     private final AtomicInteger counter = new AtomicInteger(0);
-
-    public static final int ADMIN_ID = 1;
-
-    public static final int USER_ID = 2;
 
     {
         MealsUtil.meals.forEach(meal -> save(meal, ADMIN_ID));
@@ -38,8 +37,8 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Meal save(Meal meal, int userId) {
-        mealsMap = userMealsMap.getOrDefault(userId, new ConcurrentHashMap<>());
+    public Meal save(@NotNull Meal meal, int userId) {
+        Map<Integer, Meal> mealsMap = userMealsMap.getOrDefault(userId, new ConcurrentHashMap<>());
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             mealsMap.put(meal.getId(), meal);
@@ -47,26 +46,24 @@ public class InMemoryMealRepository implements MealRepository {
             return meal;
         }
         // handle case: update, but not present in storage
-        Meal updatedMeal = mealsMap.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
-        userMealsMap.put(userId, mealsMap);
-        return updatedMeal;
+        return mealsMap.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
     public boolean delete(int id, int userId) {
-        mealsMap = userMealsMap.getOrDefault(userId, new ConcurrentHashMap<>());
+        Map<Integer, Meal> mealsMap = userMealsMap.getOrDefault(userId, new ConcurrentHashMap<>());
         return mealsMap.remove(id) != null;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        mealsMap = userMealsMap.getOrDefault(userId, new ConcurrentHashMap<>());
-        return mealsMap.getOrDefault(id, null);
+        Map<Integer, Meal> mealsMap = userMealsMap.getOrDefault(userId, new ConcurrentHashMap<>());
+        return mealsMap.get(id);
     }
 
     @Override
-    public Collection<Meal> getAll(int userId) {
-        mealsMap = userMealsMap.getOrDefault(userId, new ConcurrentHashMap<>());
+    public List<Meal> getAll(int userId) {
+        Map<Integer, Meal> mealsMap = userMealsMap.getOrDefault(userId, new ConcurrentHashMap<>());
         return mealsMap.values().stream()
                 .sorted(Comparator.comparing(Meal::getDate).reversed())
                 .collect(Collectors.toList());
@@ -77,9 +74,10 @@ public class InMemoryMealRepository implements MealRepository {
         return filterByPredicate(getAll(userId), meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate));
     }
 
-    private static List<Meal> filterByPredicate(Collection<Meal> meals, Predicate<Meal> filter) {
+    private static List<Meal> filterByPredicate(@NotNull Collection<Meal> meals, Predicate<Meal> filter) {
         return meals.stream()
                 .filter(filter)
+                .sorted(Comparator.comparing(Meal::getDate).reversed())
                 .collect(Collectors.toList());
     }
 }

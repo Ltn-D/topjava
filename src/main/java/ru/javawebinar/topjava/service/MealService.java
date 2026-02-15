@@ -9,7 +9,6 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collection;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
@@ -35,17 +34,18 @@ public class MealService {
         return checkNotFound(repository.get(id, userId), id);
     }
 
-    public Collection<Meal> getAll(int userId) {
-        return repository.getAll(userId);
+    public List<MealTo> getAll(int userId) {
+
+        List<Meal> meals =  repository.getAll(userId);
+        return MealsUtil.getTos(meals, SecurityUtil.authUserCaloriesPerDay());
     }
 
     public void update(Meal meal, int userId) {
         checkNotFound(repository.save(meal, userId), meal.getId());
     }
 
-
     public List<MealTo> getWithFilter(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
-        Collection<Meal> meals = repository.getWithDataFilter(userId, startDate, endDate);
+        List<Meal> meals = repository.getWithDataFilter(userId, startDate, endDate);
         return MealsUtil.getFilteredToTime(meals, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
     }
 }

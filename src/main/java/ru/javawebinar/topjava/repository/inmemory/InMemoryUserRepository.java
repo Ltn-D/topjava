@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -28,13 +29,14 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User save(User user) {
+    public User save(@NotNull User user) {
         if (user.isNew()) {
             user.setId(counter.incrementAndGet());
             usersMap.put(user.getId(), user);
+            log.info("create {}", user);
             return user;
         }
-        log.info("save {}", user);
+        log.info("update {}", user);
         return usersMap.computeIfPresent(user.getId(), (id, oldUser) -> user);
     }
 
@@ -56,7 +58,7 @@ public class InMemoryUserRepository implements UserRepository {
     public User getByEmail(String email) {
         log.info("getByEmail {}", email);
         return usersMap.values().stream()
-                .filter(item -> item.getEmail().equals(email))
+                .filter(item -> item.getEmail().equalsIgnoreCase(email))
                 .findFirst().orElse(null);
     }
 }

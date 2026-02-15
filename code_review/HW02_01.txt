@@ -1,0 +1,46 @@
+Meal
+3: Проверьте, что удалили `Meal.id` **и связанные с ним методы** (они уже есть в базовом `AbstractBaseEntity`)
+
+InMemoryUserRepository
+• save - ветка создания - единственная по классу, где нет логирования
+• getByEmail - учти, что email регистронезависимый
+
+MealRepository
+• удаляй реализованные TODO
+• getAll/фильтр - возвращают упорядоченный список, больше подходит List. В других слоях тоже
+InMemoryMealRepository
+• в классе располагают сначала статические, потом нестатические поля
+‼️ mealsMap как поле - не потокобезопасно. Допустим, 2 потока создают записи для разных юзеров:
+    -- поток 1: mealsMap = userMealsMap.getOrDefault(1, ...)
+    -- поток 2: mealsMap = userMealsMap.getOrDefault(2, ...)
+    -- поток 1: mealsMap.put(meal.getId(), meal); - запись упадет в мапу юзера 2
+‼️ апдейт не потокобезопасен в рамках одного пользователя при создании первой записи:
+    -- поток 1: mealsMap = userMealsMap.getOrDefault(1, new ConcurrentHashMap<>()) - возвращает new ConcurrentHashMap<>() (новая мапа №1)
+    -- поток 1: mealsMap.put(meal.getId(), meal) - кладет в мапу №1
+    -- поток 2: mealsMap = userMealsMap.getOrDefault(1, new ConcurrentHashMap<>()) - возвращает new ConcurrentHashMap<>() (в mealsMap другой объект, новая мапа №2)
+    -- поток 1: userMealsMap.put(userId, mealsMap) - кладет в общую мапу мапу №2, запись, сохраненная ранее этим потоком, теряется
+• стр. 64 - mealsMap.getOrDefault(id, null) эквивалентно mealsMap.get(id)
+• getWithDataFilter - сортировка должна выполняться после фильтрации, на меньших данных
+
+MealRestController
+• log - сделай минимальный модификатор доступа
+• все методы, возвращающие список (для отображения в раблице), должны возвращать List<MealTo>
+• ...И `userId` принимать в контроллере НЕЛЬЗЯ (иначе - для чего аторизация?)
+ Сервлет уйдет - его место займет Спринговый DispatcherServlet, в который будет принимать запросы, конвертировать параметры в Java-типы и вызывать соотв. метод контроллера.
+ И параметру userId неоткуда будет взяться.
+Используй SecurityUtil.authUserId() в методах контроллера.
+
+Также подмену пустых параметров фильтра на MIN/MAX тоже надо было бы сделать в контроллере - это логика нашего приложения, DispatcherServlet этим заниматься не будет
+
+MealServlet
+• MealServlet сделай private
+
+SecurityUtil
+• System.out не используй, если надо, пиши в лог
+
+index.html
+• если считаешь, что код не нужен, не комментируй, а удаляй
+
+работа приложения
+• правая граница времени: StartTime: -> End Time:
+• при фильтрации правая граница по времени не должна быть включена (см. демо - http://javaops-demo.ru/topjava)
