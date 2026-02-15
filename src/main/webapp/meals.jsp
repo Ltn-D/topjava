@@ -35,7 +35,7 @@
             <dd><input type="time" value="" name="startTime"></dd>
         </dl>
         <dl>
-            <dt>StartTime:</dt>
+            <dt>EndTime:</dt>
             <dd><input type="time" value="" name="endTime"></dd>
         </dl>
         <button type="submit">Filter</button>

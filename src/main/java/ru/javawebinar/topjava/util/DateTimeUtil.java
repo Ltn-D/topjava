@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,11 +8,11 @@ import java.time.format.DateTimeFormatter;
 public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public static <T extends Comparable<T>> boolean isBetweenHalfOpen(@NotNull T ldt, T start, T end) {
+    public static <T extends Comparable<T>> boolean isBetweenHalfOpen(T ldt, T start, T end) {
         return ldt.compareTo(start) >= 0 && ldt.compareTo(end) < 0;
     }
 
-    public static @NotNull String toString(LocalDateTime ldt) {
+    public static String toString(LocalDateTime ldt) {
         return ldt == null ? "" : ldt.format(DATE_TIME_FORMATTER);
     }
 
@@ -25,7 +23,7 @@ public class DateTimeUtil {
      * @return startDataString == "" -> LocalDate.MIN||LocalDate
      */
 
-    public static LocalDate getStartDate(@NotNull String startDataString) {
+    public static LocalDate getStartDate(String startDataString) {
         return (startDataString.isEmpty()) ? LocalDate.MIN : LocalDate.parse(startDataString);
     }
 
@@ -35,7 +33,7 @@ public class DateTimeUtil {
      * @param endDataString - string from parameter
      * @return endDataString == "" -> LocalDate.MAX||LocalDate plus 1 day (ldt.compareTo(end) <= 0 for day)
      */
-    public static LocalDate getEndDate(@NotNull String endDataString) {
+    public static LocalDate getEndDate(String endDataString) {
         return (endDataString.isEmpty()) ? LocalDate.MAX : LocalDate.parse(endDataString).plusDays(1);
     }
 
@@ -45,7 +43,7 @@ public class DateTimeUtil {
      * @param startTimeString - string from parameter
      * @return endDataString == "" -> LocalTime.MIN || LocalTime
      */
-    public static LocalTime getStartTime(@NotNull String startTimeString) {
+    public static LocalTime getStartTime(String startTimeString) {
         return (startTimeString.isEmpty()) ? LocalTime.MIN : LocalTime.parse(startTimeString);
     }
 
@@ -55,7 +53,7 @@ public class DateTimeUtil {
      * @param endTimeString - string from parameter
      * @return endTimeString == "" -> LocalTime.MAX || LocalTime
      */
-    public static LocalTime getEndTime(@NotNull String endTimeString) {
+    public static LocalTime getEndTime(String endTimeString) {
         return (endTimeString.isEmpty()) ? LocalTime.MAX : LocalTime.parse(endTimeString);
     }
 

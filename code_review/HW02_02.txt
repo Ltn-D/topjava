@@ -1,0 +1,21 @@
+работа приложения
+• правая граница времени: StartTime: -> End Time: (ошибка на UI)
+
+• @NotNull - аналогичные аннотации есть в Spring - см. в пакете org.springframework.lang. И без лишних зависимостей. Обращу внимание, что эти аннотации в рантайме ничего не делают, они для статического анализа.
+• MealRepository, стр. 7-8 - оставь одну
+
+InMemoryMealRepository
+• создание первой записи не потокобезопасно в рамках одного пользователя:
+    -- поток 1: mealsMap = userMealsMap.getOrDefault(1, new ConcurrentHashMap<>()) - возвращает new ConcurrentHashMap<>() (новая мапа №1)
+    -- поток 1: mealsMap.put(meal.getId(), meal) - кладет в мапу №1
+    -- поток 2: mealsMap = userMealsMap.getOrDefault(1, new ConcurrentHashMap<>()) - возвращает new ConcurrentHashMap<>() (в mealsMap другой объект, новая мапа №2)
+    -- поток 1: userMealsMap.put(userId, mealsMap) - кладет в общую мапу мапу №2, запись, сохраненная ранее этим потоком, теряется
+• getWithDataFilter - сейчас сортировка выполняется два раза: при вызове getAll (на всех данных) и в filterByPredicate - после фильтрации. А должна - один раз - после фильтрации.
+• getAll/фильтр - если у юзера нет записей, можно сразу вернуть пустой список
+
+MealService
+• стр. 38 лишняя
+• решили не связывать сервисы с авторизацией. Сейчас в getAll и getWithFilter берешь authUserCaloriesPerDay() из SecurityUtil. Или перенеси конвертацию в MealTo в контроллер, или передавай сюда норму калориев в параметре.
+
+MealServlet
+• подмену пустых параметров фильтра на MIN/MAX перенеси в контроллер, это логика нашего приложения

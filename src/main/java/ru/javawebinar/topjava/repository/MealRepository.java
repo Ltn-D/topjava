@@ -5,7 +5,6 @@ import ru.javawebinar.topjava.model.Meal;
 import java.time.LocalDate;
 import java.util.List;
 
-
 public interface MealRepository {
     // null if updated meal does not belong to userId
     Meal save(Meal meal, int userId);

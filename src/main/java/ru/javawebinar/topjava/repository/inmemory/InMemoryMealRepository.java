@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
-import org.jetbrains.annotations.NotNull;
+
+
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -33,12 +34,11 @@ public class InMemoryMealRepository implements MealRepository {
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак User", 500),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед User", 1000),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин User", 500)).forEach(meal -> save(meal, USER_ID));
-
     }
 
     @Override
-    public Meal save(@NotNull Meal meal, int userId) {
-        Map<Integer, Meal> mealsMap = userMealsMap.getOrDefault(userId, new ConcurrentHashMap<>());
+    public Meal save(Meal meal, int userId) {
+        Map<Integer, Meal> mealsMap = userMealsMap.computeIfAbsent(userId, id-> new ConcurrentHashMap<>());
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             mealsMap.put(meal.getId(), meal);
@@ -63,18 +63,25 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        Map<Integer, Meal> mealsMap = userMealsMap.getOrDefault(userId, new ConcurrentHashMap<>());
-        return mealsMap.values().stream()
-                .sorted(Comparator.comparing(Meal::getDate).reversed())
-                .collect(Collectors.toList());
+        Map<Integer, Meal> mealsMap = userMealsMap.get(userId);
+        if (mealsMap == null) {
+            return new ArrayList<>();
+        } else {
+            return filterByPredicate(mealsMap.values(), meal->true);
+        }
     }
 
     @Override
     public List<Meal> getWithDataFilter(int userId, LocalDate startDate, LocalDate endDate) {
-        return filterByPredicate(getAll(userId), meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate));
+        Map<Integer, Meal> mealsMap = userMealsMap.get(userId);
+        if (mealsMap == null) {
+            return new ArrayList<>();
+        } else {
+            return filterByPredicate(mealsMap.values(), meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate));
+        }
     }
 
-    private static List<Meal> filterByPredicate(@NotNull Collection<Meal> meals, Predicate<Meal> filter) {
+    private static List<Meal> filterByPredicate(Collection<Meal> meals, Predicate<Meal> filter) {
         return meals.stream()
                 .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDate).reversed())
