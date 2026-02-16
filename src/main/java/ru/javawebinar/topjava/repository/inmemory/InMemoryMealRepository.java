@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
-
-
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -63,29 +61,26 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        Map<Integer, Meal> mealsMap = userMealsMap.get(userId);
-        if (mealsMap == null) {
-            return new ArrayList<>();
-        } else {
-            return filterByPredicate(mealsMap.values(), meal->true);
-        }
+        return filterByPredicate(meal->true, userId);
     }
 
     @Override
     public List<Meal> getWithDataFilter(int userId, LocalDate startDate, LocalDate endDate) {
+        return filterByPredicate(meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate), userId);
+        }
+
+    private List<Meal> filterByPredicate(Predicate<Meal> filter, int userId) {
         Map<Integer, Meal> mealsMap = userMealsMap.get(userId);
         if (mealsMap == null) {
-            return new ArrayList<>();
-        } else {
-            return filterByPredicate(mealsMap.values(), meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate));
-        }
-    }
+            return Collections.emptyList();
 
-    private static List<Meal> filterByPredicate(Collection<Meal> meals, Predicate<Meal> filter) {
-        return meals.stream()
-                .filter(filter)
-                .sorted(Comparator.comparing(Meal::getDate).reversed())
-                .collect(Collectors.toList());
+        } else {
+            return mealsMap.values()
+                    .stream()
+                    .filter(filter)
+                    .sorted(Comparator.comparing(Meal::getDate).reversed())
+                    .collect(Collectors.toList());
+        }
     }
 }
 

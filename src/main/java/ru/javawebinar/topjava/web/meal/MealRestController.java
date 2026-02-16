@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
@@ -30,9 +31,13 @@ public class MealRestController {
         return service.getAll(userId, caloriesPerDay);
     }
 
-    public List<MealTo> getWithFilter(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public List<MealTo> getWithFilter(String startDateString, String endDateString, String startTimeString, String endTimeString) {
         int userId = SecurityUtil.authUserId();
         int caloriesPerDay = SecurityUtil.authUserCaloriesPerDay();
+        LocalDate startDate =  DateTimeUtil.getStartDate(startDateString);
+        LocalDate endDate = DateTimeUtil.getEndDate(endDateString);
+        LocalTime startTime = DateTimeUtil.getStartTime(startTimeString);
+        LocalTime endTime = DateTimeUtil.getEndTime(endTimeString);
         log.info("getWithFilter:\nstartDate =  {},\n" +
                 "endDate =  {},\n" +
                 "startTime=  {},\n" +
