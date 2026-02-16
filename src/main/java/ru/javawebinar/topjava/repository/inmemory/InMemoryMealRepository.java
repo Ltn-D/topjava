@@ -36,7 +36,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal, int userId) {
-        Map<Integer, Meal> mealsMap = userMealsMap.computeIfAbsent(userId, id-> new ConcurrentHashMap<>());
+        Map<Integer, Meal> mealsMap = userMealsMap.computeIfAbsent(userId, id -> new ConcurrentHashMap<>());
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             mealsMap.put(meal.getId(), meal);
@@ -61,19 +61,18 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        return filterByPredicate(meal->true, userId);
+        return filterByPredicate(meal -> true, userId);
     }
 
     @Override
     public List<Meal> getWithDataFilter(int userId, LocalDate startDate, LocalDate endDate) {
         return filterByPredicate(meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate), userId);
-        }
+    }
 
     private List<Meal> filterByPredicate(Predicate<Meal> filter, int userId) {
         Map<Integer, Meal> mealsMap = userMealsMap.get(userId);
         if (mealsMap == null) {
             return Collections.emptyList();
-
         } else {
             return mealsMap.values()
                     .stream()
