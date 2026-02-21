@@ -16,16 +16,16 @@ public class UserTestData {
     public static final int GUEST_ID = START_SEQ + 2;
     public static final int NOT_FOUND = 10;
 
-    public static final User user = new User(USER_ID, "User", "user@yandex.ru", "password", Role.USER);
-    public static final User admin = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ADMIN);
-    public static final User guest = new User(GUEST_ID, "Guest", "guest@gmail.com", "guest");
+    public static final User expectedUser = new User(USER_ID, "User", "user@yandex.ru", "password", Role.USER);
+    public static final User expectedAdmin = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ADMIN);
+    public static final User expectedGuest = new User(GUEST_ID, "Guest", "guest@gmail.com", "guest");
 
-    public static User getNew() {
+    public static User getNewUser() {
         return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
     }
 
-    public static User getUpdated() {
-        User updated = new User(user);
+    public static User getUpdatedUser() {
+        User updated = new User(expectedUser);
         updated.setEmail("update@gmail.com");
         updated.setName("UpdatedName");
         updated.setCaloriesPerDay(330);
