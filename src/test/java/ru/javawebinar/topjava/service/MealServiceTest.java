@@ -90,7 +90,7 @@ public class MealServiceTest {
     @Test
     public void updateAnotherUserMeal() {
         Meal updated = getUpdatedMeal();
-        assertThrows(NotFoundException.class, () -> service.get(updated.getId(), GUEST_ID));
+        assertThrows(NotFoundException.class, () -> service.update(updated, ADMIN_ID));
     }
 
     @Test
