@@ -28,6 +28,8 @@ public class UserServiceTest {
 
     static {
         // Only for postgres driver logging
+        //Remove the default console handlers in JUL
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
         // It uses java.util.logging and logged via jul-to-slf4j bridge
         SLF4JBridgeHandler.install();
     }
