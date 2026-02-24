@@ -26,12 +26,12 @@ public class MealTestData {
     public static final Meal adminMeal1 = new Meal(START_SEQ + 10, LocalDateTime.of(2015, Month.JUNE, 1, 14, 0), "Админ ланч", 510);
     public static final Meal adminMeal2 = new Meal(START_SEQ + 11, LocalDateTime.of(2015, Month.JUNE, 1, 21, 0), "Админ ужин", 1500);
 
-    public static List<Meal> expectedUsersMeals = Arrays.asList(userMeal7,userMeal6,userMeal5,userMeal4,userMeal3,userMeal2,userMeal1);
+    public static List<Meal> expectedUsersMeals = Arrays.asList(userMeal7, userMeal6, userMeal5, userMeal4, userMeal3, userMeal2, userMeal1);
     public static List<Meal> expectedAdminsMeals = Arrays.asList(adminMeal2, adminMeal1);
-    public static List<Meal> expectedFilteredMeals = Arrays.asList(userMeal7,userMeal6,userMeal5,userMeal4);
+    public static List<Meal> expectedFilteredMeals = Arrays.asList(userMeal7, userMeal6, userMeal5, userMeal4);
 
     public static Meal getNewMeal() {
-        return new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Новая еда",500);
+        return new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Новая еда", 500);
     }
 
     public static Meal getUpdatedMeal() {
@@ -47,7 +47,7 @@ public class MealTestData {
     }
 
     public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
-        assertMatch(actual,  (Arrays.asList(expected)));
+        assertMatch(actual, (Arrays.asList(expected)));
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
