@@ -8,7 +8,6 @@ import ru.javawebinar.topjava.repository.MealRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,28 +40,33 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public boolean delete(int id, int userId) {
-        Query query = em.createNamedQuery(Meal.DELETE);
-        query.setParameter("id", id).setParameter("userId", userId);
-        return query.executeUpdate() != 0;
+        return em.createNamedQuery(Meal.DELETE)
+                .setParameter("id", id)
+                .setParameter("userId", userId)
+                .executeUpdate() != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        Query query = em.createNamedQuery(Meal.ONE, Meal.class);
-        query.setParameter("id", id).setParameter("userId", userId);
-        return (Meal) query.getSingleResult();
+        return em.createNamedQuery(Meal.ONE, Meal.class)
+                .setParameter("id", id)
+                .setParameter("userId", userId)
+                .getSingleResult();
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        Query query = em.createNamedQuery(Meal.ALL_SORTED, Meal.class);
-        return query.setParameter("userId", userId).getResultList();
+        return em.createNamedQuery(Meal.ALL_SORTED, Meal.class)
+                .setParameter("userId", userId)
+                .getResultList();
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        Query query = em.createNamedQuery(Meal.FILTERED, Meal.class);
-        query.setParameter("userId", userId).setParameter("startDateTime", startDateTime).setParameter("endDateTime", endDateTime);
-        return query.getResultList();
+        return em.createNamedQuery(Meal.FILTERED, Meal.class)
+                .setParameter("userId", userId)
+                .setParameter("startDateTime", startDateTime)
+                .setParameter("endDateTime", endDateTime)
+                .getResultList();
     }
 }
