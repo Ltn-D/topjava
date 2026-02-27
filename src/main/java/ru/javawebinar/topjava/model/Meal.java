@@ -9,11 +9,24 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@NamedQueries({
+        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id =: id AND m.user.id =: userId"),
+        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id =: userId ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.FILTERED, query = "SELECT m FROM Meal m  WHERE m.user.id =: userId AND m.dateTime >=: startDateTime AND m.dateTime <: endDateTime ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.ONE, query = "SELECT m FROM Meal m WHERE m.id =: id AND m.user.id =: userId ORDER BY m.dateTime DESC")
+})
+
 @Entity
 @Table(name = "meal", uniqueConstraints = {//create unique index
         @UniqueConstraint(columnNames = {"user_id", "date_time"})
 })
 public class Meal extends AbstractBaseEntity {
+
+    public static final String DELETE = "Meal.delete";
+    public static final String ALL_SORTED = "Meal.getAllSorted";
+    public static final String FILTERED = "Meal.getDataTimeFiltered";
+    public static final String ONE = "Meal.getByIdAndUserId";
+
     @Column(name = "date_time")
     @NotNull
     private LocalDateTime dateTime;
