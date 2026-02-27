@@ -1,33 +1,57 @@
 package ru.javawebinar.topjava.model;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import org.hibernate.validator.constraints.Range;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@Entity
+@Table(name = "meal", uniqueConstraints = {//create unique index
+        @UniqueConstraint(columnNames = {"user_id", "date_time"})
+})
 public class Meal extends AbstractBaseEntity {
+    @Column(name = "date_time")
+    @NotNull
     private LocalDateTime dateTime;
 
+    @Column(name = "description")
+    @Size(max = 128)
     private String description;
 
+    @Column(name = "calories")
+    @Range(min = 10, max = 3000)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Meal() {
     }
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
-        this(null, dateTime, description, calories);
+        this.dateTime = dateTime;
+        this.description = description;
+        this.calories = calories;
     }
 
-    public Meal(Integer id, LocalDateTime dateTime, String description, int calories) {
+        public Meal(Integer id, LocalDateTime dateTime, String description, int calories) {
         super(id);
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
+    }
+
+    public Meal(Integer id, LocalDateTime dateTime, String description, int calories, User user) {
+        super(id);
+        this.dateTime = dateTime;
+        this.description = description;
+        this.calories = calories;
+        this.user = user;
     }
 
     public LocalDateTime getDateTime() {

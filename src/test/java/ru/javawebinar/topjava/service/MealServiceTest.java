@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.time.Month;
 
@@ -26,7 +26,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@Ignore
+//@Ignore
 public class MealServiceTest {
 
     @Autowired
@@ -35,7 +35,7 @@ public class MealServiceTest {
     @Test
     public void delete() {
         service.delete(MEAL1_ID, USER_ID);
-        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
+        assertThrows(NoResultException.class, () -> service.get(MEAL1_ID, USER_ID));
     }
 
     @Test
@@ -72,12 +72,12 @@ public class MealServiceTest {
 
     @Test
     public void getNotFound() {
-        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, USER_ID));
+        assertThrows(NoResultException.class, () -> service.get(NOT_FOUND, USER_ID));
     }
 
     @Test
     public void getNotOwn() {
-        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, ADMIN_ID));
+        assertThrows(NoResultException.class, () -> service.get(MEAL1_ID, ADMIN_ID));
     }
 
     @Test
@@ -88,17 +88,20 @@ public class MealServiceTest {
     }
 
     @Test
+
     public void updateNotOwn() {
         assertThrows(NotFoundException.class, () -> service.update(meal1, ADMIN_ID));
         MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), meal1);
     }
 
     @Test
+
     public void getAll() {
         MEAL_MATCHER.assertMatch(service.getAll(USER_ID), meals);
     }
 
     @Test
+
     public void getBetweenInclusive() {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(
                         LocalDate.of(2020, Month.JANUARY, 30),
@@ -107,6 +110,7 @@ public class MealServiceTest {
     }
 
     @Test
+
     public void getBetweenWithNullDates() {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
     }
