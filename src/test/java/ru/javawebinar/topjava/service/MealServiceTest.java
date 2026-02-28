@@ -18,7 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.concurrent.TimeUnit;
@@ -38,15 +37,15 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 public class MealServiceTest {
 
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    private static final StringBuilder summary = new StringBuilder("\n--- CLASS SUMMARY ---\n");
+    private static final StringBuilder summary = new StringBuilder("\n  ----- CLASS SUMMARY -----  \n");
 
     @Rule
     public Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
             long millis = TimeUnit.NANOSECONDS.toMillis(nanos);
-            String message = String.format("Test %s performed: %d ms", description.getMethodName(), millis);
-            log.info(String.format("Test %s performed: %d ms", description.getMethodName(), millis));
+            String message = String.format("%-25s %d ms", description.getMethodName(), millis);
+            log.info(String.format("%-25s %d ms", description.getMethodName(), millis));
             summary.append(message).append("\n");
         }
     };
@@ -65,7 +64,7 @@ public class MealServiceTest {
     @Test
     public void delete() {
         service.delete(MEAL1_ID, USER_ID);
-        assertThrows(NoResultException.class, () -> service.get(MEAL1_ID, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
     }
 
     @Test
@@ -102,12 +101,12 @@ public class MealServiceTest {
 
     @Test
     public void getNotFound() {
-        assertThrows(NoResultException.class, () -> service.get(NOT_FOUND, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, USER_ID));
     }
 
     @Test
     public void getNotOwn() {
-        assertThrows(NoResultException.class, () -> service.get(MEAL1_ID, ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, ADMIN_ID));
     }
 
     @Test

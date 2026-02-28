@@ -54,9 +54,6 @@ public class User extends AbstractNamedEntity {
     @Range(min = 10, max = 10000)
     private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<Meal> meals;
-
     public User() {
     }
 
@@ -121,14 +118,6 @@ public class User extends AbstractNamedEntity {
     public void setRoles(Collection<Role> roles) {
         this.roles = CollectionUtils.isEmpty(roles) ? EnumSet.noneOf(Role.class) : EnumSet.copyOf(roles);
     }
-
-//    public List<Meal> getMeals() {
-//        return meals;
-//    }
-//
-//    public void setMeals(List<Meal> meals) {
-//        this.meals = meals;
-//    }
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;

@@ -1,0 +1,29 @@
+User
+• meals, cascade = CascadeType.REMOVE - это при удалении юзера удалится и его еда. По логике верно.
+  Но у нас в БД стоит ON DELETE CASCADE, поэтому каскадное удаление будет.
+  А CascadeType.REMOVE будет работать только при удалении через Persistence context, а через query - не будет.
+  И запросов в БД при этом будет гораздо больше. Если интересно, попробуй ataJpaUserRepository#delete сделать таким:
+Java
+
+public boolean delete(int id) {
+        User ref = em.getReference(User.class, id);
+        em.remove(ref);
+        return true;
+    }
+, запустить тест UserServiceTest#delete и посмотреть в логе запросы с CascadeType.REMOVE и без.
+
+JpaMealRepository
+• save - в начале апдейта достается старая запись, принадлежащая юзеру userId. Такая же логика у метода JpaMealRepository#get, используй его
+
+MealServiceTest
+• `getNotFound`, `getNotOwn` - условия не менялись, при запросе несуществующей или чужой записи должно быть выброшено `NotFoundException`
+Поищи по классу `NoResultException`, поменяй их все обратно на NotFoundException. Да, эти тесты перестанут проходить. Но требования - такие. Надо будет поправить реализацию.
+
+п. 3
+• сводку в конце класса сделай читабельнее: убери лишний текст, можно немного отформатировать. Нужная информация: имя теста - время выполнения.
+Как-то так:
+updateNotFound       408 ms
+create               528 ms
+.........
+getNotOwn            87 ms
+getBetween           81 ms
