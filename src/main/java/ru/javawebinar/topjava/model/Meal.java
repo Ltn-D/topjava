@@ -12,8 +12,9 @@ import java.time.LocalTime;
 @NamedQueries({
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id =: id AND m.user.id =: userId"),
         @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id =: userId ORDER BY m.dateTime DESC"),
-        @NamedQuery(name = Meal.FILTERED, query = "SELECT m FROM Meal m  WHERE m.user.id =: userId AND m.dateTime >=: startDateTime AND m.dateTime <: endDateTime ORDER BY m.dateTime DESC"),
-        @NamedQuery(name = Meal.ONE, query = "SELECT m FROM Meal m WHERE m.id =: id AND m.user.id =: userId ORDER BY m.dateTime DESC")
+        @NamedQuery(name = Meal.FILTERED, query = "SELECT m FROM Meal m  WHERE m.user.id =: userId AND m.dateTime >=: startDateTime " +
+                "AND m.dateTime <: endDateTime ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.ONE, query = "SELECT m FROM Meal m WHERE m.id =: id AND m.user.id =: userId")
 })
 
 @Entity
@@ -40,23 +41,19 @@ public class Meal extends AbstractBaseEntity {
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
+    @NotNull
     private User user;
 
     public Meal() {
     }
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
-        this.dateTime = dateTime;
-        this.description = description;
-        this.calories = calories;
+        this(null, dateTime, description, calories);
     }
 
-        public Meal(Integer id, LocalDateTime dateTime, String description, int calories) {
-        super(id);
-        this.dateTime = dateTime;
-        this.description = description;
-        this.calories = calories;
+    public Meal(Integer id, LocalDateTime dateTime, String description, int calories) {
+        this(id, dateTime, description, calories, null);
     }
 
     public Meal(Integer id, LocalDateTime dateTime, String description, int calories, User user) {

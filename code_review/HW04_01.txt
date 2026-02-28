@@ -1,0 +1,45 @@
+Meal
+• переноси длинные строки (ориентируйся на +/- 120 символов)
+• стр. 16 - запрос одной записи, сортировка не нужна
+• используй chaining constructor - при таком подходе из конструктора с меньшим количеством параметров вызывают конструктор с большим количеством, передавая вместо отсутствующих параметров значения по умолчанию
+• user - не должен быть null (добавь ограничение для валидации и nullable для автогенерации схемы БД)
+
+User#meals
+• CascadeType.ALL - для чего?
+1. Запусти тест UserServiceTest#update с CascadeType.ALL и без него. Посмотри, какие запросы идут в базу.
+2. Добавь в UserServiceTest такой тест:
+Java
+
+ @Autowired
+    private MealService mealService;
+
+    @Test
+    public void updateWithMeals() {
+        MealTestData.MEAL_MATCHER.assertMatch(mealService.get(MealTestData.MEAL1_ID, USER_ID), MealTestData.meal1);
+        User updated = getUpdated();
+        MealTestData.meal1.setUser(admin);
+        updated.setMeals(Arrays.asList(MealTestData.meal1));
+        service.update(updated);
+        USER_MATCHER.assertMatch(service.get(USER_ID), getUpdated());
+        MealTestData.MEAL_MATCHER.assertMatch(mealService.get(MealTestData.MEAL1_ID, USER_ID), MealTestData.meal1);
+    }
+Тоже попробуй с CascadeType.ALL и без. Увидишь, что с CascadeType.ALL изменения произошли мимо нашей бизнес-логики  (что нельзя апдейтить и присваивать чужую еду)
+• и если поле meals пока никак не используется, не стоит его и вводить
+
+JpaMealRepository
+• save
+-- стр. 25 - нет необходимости доставать юзера из БД, тут нужен только его id
+1: Т.к. JPA работает с объектами, мы не можем использовать `userId` для сохранения. Можно сделать, например, так:
+Java
+
+User ref = em.getReference(User.class, userId);
+ meal.setUser(ref);
+При этом от `User` нам нужен только `id`. Над `id` создается lazy прокси, который обращается к базе при запросе любого поля. Т. е. у нас запроса в базу за юзером не будет: проверьте по логам Hibernate.
+
+MealTestData
+• getUpdated - при работе приложения в сервис на апдейт будет приходить еда без поля user, убери его и из тестовых данных.
+
+MealServiceTest
+• пиши в лог на английском
+• getNotFound, getNotOwn - условия не менялись, при запросе несуществующей или чужой записи должно быть выброшено NotFoundException
+• стр. 121, 128, 134, 143 - лишние

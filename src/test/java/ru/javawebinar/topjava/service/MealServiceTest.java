@@ -38,15 +38,15 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 public class MealServiceTest {
 
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    private static final StringBuilder summary = new StringBuilder("\n--- СВОДКА ПО КЛАССУ ---\n");
+    private static final StringBuilder summary = new StringBuilder("\n--- CLASS SUMMARY ---\n");
 
     @Rule
     public Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
             long millis = TimeUnit.NANOSECONDS.toMillis(nanos);
-            String message = String.format("Тест %s выполнялся: %d мс", description.getMethodName(), millis);
-            log.info(String.format("Тест %s выполнялся: %d мс", description.getMethodName(), millis));
+            String message = String.format("Test %s performed: %d ms", description.getMethodName(), millis);
+            log.info(String.format("Test %s performed: %d ms", description.getMethodName(), millis));
             summary.append(message).append("\n");
         }
     };
@@ -118,20 +118,17 @@ public class MealServiceTest {
     }
 
     @Test
-
     public void updateNotOwn() {
         assertThrows(NotFoundException.class, () -> service.update(meal1, ADMIN_ID));
         MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), meal1);
     }
 
     @Test
-
     public void getAll() {
         MEAL_MATCHER.assertMatch(service.getAll(USER_ID), meals);
     }
 
     @Test
-
     public void getBetweenInclusive() {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(
                         LocalDate.of(2020, Month.JANUARY, 30),
@@ -140,7 +137,6 @@ public class MealServiceTest {
     }
 
     @Test
-
     public void getBetweenWithNullDates() {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
     }
