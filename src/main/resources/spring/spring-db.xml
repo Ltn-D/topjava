@@ -36,6 +36,7 @@
                   p:showSql="${jpa.showSql}">
             </bean>
         </property>
+
     </bean>
 
     <tx:annotation-driven/>
@@ -80,11 +81,18 @@
         <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE"/>
 
         <bean id="dataSource"
-              class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+              class="org.apache.tomcat.jdbc.pool.DataSource"
               p:driverClassName="org.postgresql.Driver"
               p:url="${database.url}"
               p:username="${database.username}"
-              p:password="${database.password}"/>
+              p:password="${database.password}"
+              p:initialSize="5"
+              p:maxActive="100"
+              p:maxIdle="50"
+              p:minIdle="20"
+              p:testOnBorrow="true"
+              p:validationQuery="SELECT 1"/>
+
     </beans>
 
     <beans profile="jdbc">
