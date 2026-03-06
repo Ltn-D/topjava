@@ -17,9 +17,6 @@ import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 public abstract class AbstractMealServiceTest extends AbstractServiceTest {
-    private static final Logger log = getLogger("result");
-
-    private static final StringBuilder results = new StringBuilder();
 
     @Autowired
     private MealService service;
