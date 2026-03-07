@@ -9,16 +9,14 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public class JdbcMealRepository implements MealRepository {
+public abstract class AbstractJdbcMealRepository implements MealRepository {
 
     private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
@@ -29,7 +27,7 @@ public class JdbcMealRepository implements MealRepository {
     private final SimpleJdbcInsert insertMeal;
 
     @Autowired
-    public JdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public AbstractJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meal")
                 .usingGeneratedKeyColumns("id");
@@ -44,12 +42,8 @@ public class JdbcMealRepository implements MealRepository {
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories())
-                .addValue("user_id", userId);
-        if (Profiles.getActiveDbProfile().equals(Profiles.HSQL_DB)) {
-            map.addValue("date_time", Timestamp.valueOf((meal.getDateTime())));
-        } else {
-            map.addValue("date_time", (meal.getDateTime()));
-        }
+                .addValue("user_id", userId)
+                .addValue("date_time", getDataTime(meal.getDateTime()));
         if (meal.isNew()) {
             Number newId = insertMeal.executeAndReturnKey(map);
             meal.setId(newId.intValue());
@@ -62,6 +56,8 @@ public class JdbcMealRepository implements MealRepository {
         }
         return meal;
     }
+
+    protected abstract Object getDataTime(LocalDateTime dateTime);
 
     @Override
     public boolean delete(int id, int userId) {
@@ -83,14 +79,8 @@ public class JdbcMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        if (Profiles.getActiveDbProfile().equals(Profiles.HSQL_DB)) {
-            return jdbcTemplate.query(
-                    "SELECT * FROM meal WHERE user_id=?  AND date_time >=  ? AND date_time < ? ORDER BY date_time DESC",
-                    ROW_MAPPER, userId, Timestamp.valueOf(startDateTime),  Timestamp.valueOf(endDateTime));
-        } else {
-            return jdbcTemplate.query(
-                    "SELECT * FROM meal WHERE user_id=?  AND date_time >=  ? AND date_time < ? ORDER BY date_time DESC",
-                    ROW_MAPPER, userId, startDateTime, endDateTime);
-        }
+        return jdbcTemplate.query(
+                "SELECT * FROM meal WHERE user_id=?  AND date_time >=  ? AND date_time < ? ORDER BY date_time DESC",
+                ROW_MAPPER, userId, getDataTime(startDateTime), getDataTime(endDateTime));
     }
 }

@@ -17,11 +17,12 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 public abstract class AbstractMealServiceTest extends AbstractServiceTest {
 
     @Autowired
-    private MealService service;
+    protected MealService service;
+
+
 
     @Test
     public void delete() {
-
         service.delete(MEAL1_ID, USER_ID);
         assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
     }
@@ -63,7 +64,6 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
     public void getNotFound() {
         assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, USER_ID));
     }
-
 
     @Test
     public void getNotOwn() {

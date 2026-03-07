@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.repository;
 
-import org.springframework.context.annotation.Profile;
-import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDateTime;
@@ -23,9 +21,7 @@ public interface MealRepository {
     // ORDERED dateTime desc
     List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId);
 
-    @Profile(Profiles.DATAJPA)
     default Meal getWithUser(int id, int userId){
         throw new UnsupportedOperationException("Method getWithUser oly for Profiles.DATAJPA");
-    };
-
+    }
 }
