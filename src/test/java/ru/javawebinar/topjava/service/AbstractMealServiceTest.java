@@ -19,8 +19,6 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
     @Autowired
     protected MealService service;
 
-
-
     @Test
     public void delete() {
         service.delete(MEAL1_ID, USER_ID);
@@ -56,7 +54,6 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
     @Test
     public void get() {
         Meal actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
-        System.out.println(actual);
         MEAL_MATCHER.assertMatch(actual, adminMeal1);
     }
 

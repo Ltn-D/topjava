@@ -15,7 +15,7 @@ public class JdbcPostgresMealRepository extends AbstractJdbcMealRepository {
         super(jdbcTemplate, namedParameterJdbcTemplate);
     }
 
-    public LocalDateTime getDataTime(LocalDateTime dateTime) {
+    protected LocalDateTime getDataTime(LocalDateTime dateTime) {
         return dateTime;
     }
 }

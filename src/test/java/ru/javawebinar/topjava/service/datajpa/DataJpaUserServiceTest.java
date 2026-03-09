@@ -6,6 +6,8 @@ import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.AbstractUserServiceTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -22,8 +24,7 @@ public class DataJpaUserServiceTest extends AbstractUserServiceTest {
     @Test
     public void getNotFoundMeals() {
         User actual = service.getWithMeals(GUEST_ID);
-        System.out.println(actual);
         USER_MATCHER.assertMatch(actual, guest);
-        MEAL_MATCHER.assertMatch(actual.getMeals());
+        assertThat(actual.getMeals()).isNullOrEmpty();
     }
 }

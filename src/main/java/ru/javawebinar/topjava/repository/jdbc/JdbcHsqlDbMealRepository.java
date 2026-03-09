@@ -16,7 +16,7 @@ public class JdbcHsqlDbMealRepository extends AbstractJdbcMealRepository {
         super(jdbcTemplate, namedParameterJdbcTemplate);
     }
 
-    public Timestamp getDataTime(LocalDateTime dateTime) {
+    protected Timestamp getDataTime(LocalDateTime dateTime) {
         return Timestamp.valueOf(dateTime);
     }
 }
