@@ -58,7 +58,7 @@
               p:url="${database.url}"
               p:username="${database.username}"
               p:password="${database.password}"
-              p:initialSize="1"
+              p:initialSize="0"
               p:maxActive="100"
               p:maxIdle="50"
               p:minIdle="20"
