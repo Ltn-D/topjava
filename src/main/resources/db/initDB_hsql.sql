@@ -22,7 +22,7 @@ CREATE TABLE user_role
 (
     user_id INTEGER NOT NULL,
     role    VARCHAR(255) NOT NULL,
-    CONSTRAINT user_roles_idx UNIQUE (user_id, role),
+    CONSTRAINT user_roles_idx
     FOREIGN KEY (user_id) REFERENCES USERS (id) ON DELETE CASCADE
 );
 

@@ -65,6 +65,15 @@
 
     <beans profile="jdbc">
         <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
+
+        <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+        <bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor">
+            <property name="validator" ref="validator"/>
+        </bean>
+
+        <bean id="transactionManager" class="org.springframework.jdbc.support.JdbcTransactionManager">
+            <property name="dataSource" ref="dataSource" />
+        </bean>
         <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
             <constructor-arg ref="dataSource"/>
         </bean>

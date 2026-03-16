@@ -5,6 +5,9 @@ import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -12,8 +15,9 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.TimingRules;
+import ru.javawebinar.topjava.repository.JpaUtil;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -24,16 +28,33 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 @ActiveProfiles(resolver = ActiveDbProfileResolver.class)
 public abstract class AbstractServiceTest {
 
+    @Autowired(required = false)
+    protected JpaUtil jpaUtil;
+
+    @Autowired
+    private Environment environment;
+
     @ClassRule
     public static ExternalResource summary = TimingRules.SUMMARY;
 
     @Rule
     public Stopwatch stopwatch = TimingRules.STOPWATCH;
 
-    //  Check root cause with AssertJ: https://github.com/junit-team/junit-framework/issues/2129#issuecomment-565712630
+
     protected <T extends Throwable> void validateRootCause(Class<T> rootExceptionClass, Runnable runnable) {
-        assertThatExceptionOfType(Throwable.class)
-                .isThrownBy(runnable::run)
-                .withRootCauseInstanceOf(rootExceptionClass);
+        assertThatThrownBy(runnable::run)
+                .isInstanceOfAny(rootExceptionClass, Exception.class)
+                .satisfies(e -> {
+                    Throwable cause = e;
+                    while (cause != null) {
+                        if (rootExceptionClass.isInstance(cause)) return;
+                        cause = cause.getCause();
+                    }
+                });
+    }
+
+    // Check profiles
+    public boolean isJdbc() {
+        return environment.acceptsProfiles(Profiles.of("jdbc"));
     }
 }
