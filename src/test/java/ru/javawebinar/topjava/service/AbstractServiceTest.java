@@ -30,8 +30,8 @@ public abstract class AbstractServiceTest {
 //    @Autowired(required = false)
 //    protected JpaUtil jpaUtil;
 
-    @Autowired
-    private Environment environment;
+//    @Autowired
+//    private Environment environment;
 
     @ClassRule
     public static ExternalResource summary = TimingRules.SUMMARY;
