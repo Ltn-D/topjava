@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/cache
+         http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+    <!-- enables scanning for @Cacheable annotation -->
+    <cache:annotation-driven cache-manager="ehCacheManager"/>
+
+    <!--disable Spring cach-->
+    <bean id="ehCacheManager" class="org.springframework.cache.support.NoOpCacheManager"/>
+    <!--Placeholder for (org.hibernate.cfg.AvailableSettings).USE_SECOND_LEVEL_CACHE-->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <props>
+                <prop key="hibernate.cache.use_l2">false</prop>
+            </props>
+        </property>
+    <!--    leave default value if Placeholder not defined-->
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+    </bean>
+</beans>

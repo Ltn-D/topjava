@@ -7,7 +7,6 @@ import org.junit.rules.Stopwatch;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.Profiles;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -15,7 +14,6 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.TimingRules;
-import ru.javawebinar.topjava.repository.JpaUtil;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -28,8 +26,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @ActiveProfiles(resolver = ActiveDbProfileResolver.class)
 public abstract class AbstractServiceTest {
 
-    @Autowired(required = false)
-    protected JpaUtil jpaUtil;
+//    hibernate.cache.use_second_level_cache=false"
+//    @Autowired(required = false)
+//    protected JpaUtil jpaUtil;
 
     @Autowired
     private Environment environment;
@@ -53,8 +52,8 @@ public abstract class AbstractServiceTest {
                 });
     }
 
-    // Check profiles
-    public boolean isJdbc() {
-        return environment.acceptsProfiles(Profiles.of("jdbc"));
-    }
+//    hibernate.cache.use_second_level_cache=false
+//    public boolean isJdbc() {
+//        return environment.acceptsProfiles(Profiles.of("jdbc"));
+//    }
 }
