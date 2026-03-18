@@ -1,0 +1,32 @@
+• initDB.sql (initDB_hsql.sql), стр. 24 (25) - было CONSTRAINT user_roles_idx UNIQUE (user_id, role),
+ - ограничение уникальности нужно было, роли у юзера не должны дублироваться
+
+• jsp - pageContext.request.contextPath - чтобы не дублировать везде, можно задать [base](http://htmlbook.ru/html/base)
+
+• MealRestController - не надо переопределять родительские методы, если там только вызов super
+• AbstractMealController - логгер сделай не от AbstractMealController, а от текущего класса. И его же и используй в наследниках
+
+• JspMealController
+    -- getFilteredMeals - неиспользуемый код не комментируй, а удаляй
+    -- не дублируй слово "meal" в именах методов, оно есть в имени класса
+    -- System.out не используй, пиши в лог
+    -- стр. 72, setCharacterEncoding: 1: Неверная кодировка UTF-8 с Spring обычно решается фильтром CharacterEncodingFilter:...
+
+• JdbcMealRepository - стр. 44 и 68 добавлены зря
+• AbstractServiceTest, AbstractUserServiceTest - удаляй неиспользуемый код
+
+
+• п. 2.1 - Spring не знает, что в jdbc используешь аннотации (см. spring-db)
+
+роли
+• JdbcUserRepository
+    -- System.out не используй. Если надо, пиши в лог
+    -- save - удаление ролей нужно только при апдейте, а вставка - во всех случаях. Сверься, как сейчас
+    -- приватные методы располагают после неприватных, в которых используются
+    -- getAll - 2.3.1 В реализации `getAll` НЕ делать запрос ролей для каждого юзера (N+1 select)
+
+• getWithMeals тоже протестируй с юзером с несколькими ролями.
+
+кеш
+• spring-cache.xml из test - обращу внимание, что без стр. 12-15 кеш Spring тоже не будет работать в тестах, т. к. spring-cache.xml из test будет использоваться вместо spring-cache.xml из main, и если не будет <cache:annotation-driven, аннотации @Cacheable и пр. будут просто проигнорированы
+• AbstractUserServiceTest - если все кеши для тестов отключены, то и кеш Spring инвалидировать не надо.

@@ -5,8 +5,6 @@ import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -26,19 +24,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @ActiveProfiles(resolver = ActiveDbProfileResolver.class)
 public abstract class AbstractServiceTest {
 
-//    hibernate.cache.use_second_level_cache=false"
-//    @Autowired(required = false)
-//    protected JpaUtil jpaUtil;
-
-//    @Autowired
-//    private Environment environment;
-
     @ClassRule
     public static ExternalResource summary = TimingRules.SUMMARY;
 
     @Rule
     public Stopwatch stopwatch = TimingRules.STOPWATCH;
-
 
     protected <T extends Throwable> void validateRootCause(Class<T> rootExceptionClass, Runnable runnable) {
         assertThatThrownBy(runnable::run)
@@ -51,9 +41,4 @@ public abstract class AbstractServiceTest {
                     }
                 });
     }
-
-//    hibernate.cache.use_second_level_cache=false
-//    public boolean isJdbc() {
-//        return environment.acceptsProfiles(Profiles.of("jdbc"));
-//    }
 }

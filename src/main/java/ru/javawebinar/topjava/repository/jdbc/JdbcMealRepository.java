@@ -41,7 +41,6 @@ public class JdbcMealRepository implements MealRepository {
     @Transactional
     @Override
     public Meal save(Meal meal, int userId) {
-
         MapSqlParameterSource map = new MapSqlParameterSource()
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
@@ -65,7 +64,6 @@ public class JdbcMealRepository implements MealRepository {
     @Transactional
     @Override
     public boolean delete(int id, int userId) {
-
         return jdbcTemplate.update("DELETE FROM meal WHERE id=? AND user_id=?", id, userId) != 0;
     }
 
