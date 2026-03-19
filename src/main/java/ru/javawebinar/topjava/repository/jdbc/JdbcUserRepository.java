@@ -14,8 +14,7 @@ import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Transactional(readOnly = true)
 @Repository
@@ -40,10 +39,19 @@ public class JdbcUserRepository implements UserRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    @Transactional
     @Override
-    public boolean delete(int id) {
-        return jdbcTemplate.update("DELETE FROM users WHERE id=?", id) != 0;
+    public List<User> getAll() {
+        List<User> users = jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+        Map<Integer, Set<Role>> roleMap = new HashMap<>();
+        jdbcTemplate.query("SELECT user_id, role FROM user_role", rs -> {
+            int userId = rs.getInt("user_id");
+            Role role = Role.valueOf(rs.getString("role"));
+            roleMap.computeIfAbsent(userId,
+                            id -> EnumSet.noneOf(Role.class))
+                    .add(role);
+        });
+        users.forEach(user -> user.setRoles(roleMap.get(user.getId())));
+        return users;
     }
 
     @Override
@@ -54,8 +62,23 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+    public User get(int id) {
+        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
+        return addRoles(DataAccessUtils.singleResult(users));
+    }
+
+    private User addRoles(User user) {
+        if (user != null) {
+            List<Role> roles = jdbcTemplate.queryForList("SELECT role FROM user_role WHERE user_id=?", Role.class, user.getId());
+            user.setRoles(roles);
+        }
+        return user;
+    }
+
+    @Transactional
+    @Override
+    public boolean delete(int id) {
+        return jdbcTemplate.update("DELETE FROM users WHERE id=?", id) != 0;
     }
 
     @Transactional
@@ -77,19 +100,6 @@ public class JdbcUserRepository implements UserRepository {
             }
         }
         insertRoles(user);
-        return user;
-    }
-
-    @Override
-    public User get(int id) {
-        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
-        return addRoles(DataAccessUtils.singleResult(users));
-    }
-    private User addRoles(User user) {
-        if (user != null) {
-            List<Role> roles = jdbcTemplate.queryForList("SELECT role FROM user_role WHERE user_id=?", Role.class, user.getId());
-            user.setRoles(roles);
-        }
         return user;
     }
 

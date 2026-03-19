@@ -43,10 +43,9 @@ public class DataJpaUserRepository implements UserRepository {
         return crudRepository.findAll(SORT_NAME_EMAIL);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public User getWithMeals(int id) {
-        crudRepository.getWithRoles(id);
         return crudRepository.getWithMeals(id);
     }
 }

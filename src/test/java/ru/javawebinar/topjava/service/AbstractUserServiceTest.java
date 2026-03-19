@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import ru.javawebinar.topjava.MatcherFactory;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -74,9 +73,8 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void getAll() {
-        MatcherFactory.Matcher<User> matcherForAll  = MatcherFactory.usingIgnoringFieldsComparator("registered", "meals", "roles");
         List<User> all = service.getAll();
-        matcherForAll.assertMatch(all, admin, guest, user);
+        USER_MATCHER.assertMatch(all, admin, guest, user);
     }
 
     @Test

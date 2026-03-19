@@ -21,7 +21,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
 
 public abstract class AbstractMealController {
 
-    private static final Logger log = LoggerFactory.getLogger(java.lang.invoke.MethodHandles.lookup().lookupClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private final MealService service;
 
