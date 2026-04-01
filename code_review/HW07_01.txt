@@ -1,0 +1,10 @@
+• RootControllerTest#getMeals -
+8: Попробуйте в `RootControllerTest.getMeals` сделать сравнение через `model().attribute("meals", expectedValue)`...
+• 1.2 Сделать **ResourceControllerTest** для style.css - styleStatusAndContentType должен быть в отдельном тестовом классе
+• AdminRestController#getWithMeals - "/with-meals/{id}" -> "/{id}/with-meals" (после коллекции обычно идет id элемента коллекции)
+• AdminRestControllerTest/ProfileRestControllerTest - тесты getWithMeals с такими ожиданиями актуальны только для профиля datajpa.
+    Для других проверять нечего.
+
+• п. 3 (сделать кастомную конвертацию со Spring Type Conversion) - нет
+• п. 4 - это должна быть документация нашего API - человекочитаемый файл с примерами запросов с помощью утилиты curl,
+        которые можно скопировать и быстро запустить из терминала.
