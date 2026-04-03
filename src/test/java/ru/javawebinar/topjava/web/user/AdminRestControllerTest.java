@@ -62,6 +62,23 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void disable() throws Exception {
+        perform(MockMvcRequestBuilders.patch(REST_URL + GUEST_ID).param("enabled", "false").contentType(MediaType.APPLICATION_JSON)).andDo(print());
+        User enabledUser = userService.get(GUEST_ID);
+        guest.setEnabled(false);
+        USER_MATCHER.assertMatch(enabledUser, guest);
+        guest.setEnabled(true);
+    }
+
+    @Test
+    void enable() throws Exception {
+        perform(MockMvcRequestBuilders.patch(REST_URL + GUEST_ID).param("enabled", "true").contentType(MediaType.APPLICATION_JSON)).andDo(print());
+        User enabledUser = userService.get(GUEST_ID);
+        guest.setEnabled(true);
+        USER_MATCHER.assertMatch(enabledUser, guest);
+    }
+
+    @Test
     void createWithLocation() throws Exception {
         User newUser = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)

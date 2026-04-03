@@ -1,4 +1,4 @@
-const userAjaxUrl = "admin/users/";
+const userAjaxUrl = "profile/meals/";
 
 // https://stackoverflow.com/a/5064235/548473
 const ctx = {
@@ -6,25 +6,17 @@ const ctx = {
 };
 
 function updateTable() {
-    $.get(ctx.ajaxUrl, function (data) {
+    $.get(ctx.ajaxUrl + "filter", $("#filter").serialize(), function (data) {
         ctx.datatableApi.clear().rows.add(data).draw();
+        successNoty("Filtered");
     });
 }
 
-function enable(chkbox, id) {
-    const enabled = chkbox.is(":checked");
-    $.ajax({
-        type: "POST",
-        url: ctx.ajaxUrl + id,
-        data: "enabled=" + enabled
-    })
-        .done(function () {
-            chkbox.closest("tr").attr("data-user-enabled", enabled);
-            successNoty(enabled ? "Enabled" : "Disabled");
-        })
-        .fail(function () {
-            chkbox.prop("checked", !enabled);
-        });
+function clearFilter() {
+    $("#filter")[0].reset();
+    $.get(ctx.ajaxUrl, function (data) {
+        ctx.datatableApi.clear().rows.add(data).draw();
+    });
 }
 
 // $(document).ready(function () {
@@ -35,19 +27,13 @@ $(function () {
             "info": true,
             "columns": [
                 {
-                    "data": "name"
+                    "data": "dateTime"
                 },
                 {
-                    "data": "email"
+                    "data": "description"
                 },
                 {
-                    "data": "roles"
-                },
-                {
-                    "data": "enabled"
-                },
-                {
-                    "data": "registered"
+                    "data": "calories"
                 },
                 {
                     "defaultContent": "Edit",
