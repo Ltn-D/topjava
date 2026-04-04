@@ -36,7 +36,6 @@
                     <td><a href="mailto:${user.email}">${user.email}</a></td>
                     <td>${user.roles}</td>
                     <td>
-                        <span>Статус в объекте: ${user.enabled}</span>
                         <input type="checkbox"
                                class="user-status"
                                data-id="${user.id}"
