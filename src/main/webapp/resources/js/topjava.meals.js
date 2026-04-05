@@ -5,10 +5,6 @@ const ctx = {
     ajaxUrl: mealAjaxUrl
 };
 
-function drawTable(data) {
-    ctx.datatableApi.clear().rows.add(data).draw();
-}
-
 function updateTable() {
     $.get(ctx.ajaxUrl + "filter", $("#filter").serialize(), function (data) {
         drawTable(data);
