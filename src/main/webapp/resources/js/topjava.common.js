@@ -1,5 +1,9 @@
 let form;
 
+function prepareDateTime(value) {
+    return value.replace('T', ' ').substring(0, 16);
+}
+
 function makeEditable(datatableApi) {
     ctx.datatableApi = datatableApi;
     form = $('#detailsForm');
@@ -23,7 +27,11 @@ function updateRow(id) {
     $("#modalTitle").html(i18n["editTitle"]);
     $.get(ctx.ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
-            form.find(`input[name='${key}']`).val(value);
+            let input = form.find("input[name='" + key + "']");
+            if (key === "dateTime" && value) {
+                value = prepareDateTime(value);
+            }
+                input.val(value);
         });
         $('#editRow').modal();
     });
