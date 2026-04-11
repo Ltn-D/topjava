@@ -1,0 +1,14 @@
+• Meal#getCalories - может быть NPE при calories=null
+• MealUIController#createOrUpdate - @ResponseStatus(HttpStatus.NO_CONTENT) - не нужно, сам метод возвращает или "unprocessable entity", или "ok"
+• meals.jsp, users.jsp - инициализацию i18n тоже можно вынести в i18n.jsp.
+Установку значений для addTitle, `editTitle тоже: https://stackoverflow.com/questions/5444083/pass-java-variable-in-jspparam
+• `topjava.meals.js`
+    -- стр. 32, 41, 47 - date -> data
+    -- стр. 41, 47 - если в render отрисовывается прямо значение из data, функцию в render можно не писать, такое поведение по умолчанию
+    -- стр. 70-74 - никогда не делай подобные конструкции:
+```if (boolean_condition)
+    set(true)
+else
+    set(false)```
+- это set(boolean_condition)
+• в datetimepicker попробуй учесть момент, что date/time end не может быть раньше date/time start

@@ -29,25 +29,18 @@ $(function () {
             "columns": [
                 {
                     "data": "dateTime",
-                    "render": function (date, type, row) {
+                    "render": function (data, type, row) {
                         if (type === "display") {
-                            return prepareDateTime(date);
+                            return prepareDateTime(data);
                         }
-                        return date;
+                        return data;
                     }
                 },
                 {
                     "data": "description",
-                    "render": function (date, type, row) {
-                        return date;
-                    }
-
                 },
                 {
                     "data": "calories",
-                    "render": function (date, type, row) {
-                        return date;
-                    }
                 },
                 {
                     "orderable": false,
@@ -66,14 +59,9 @@ $(function () {
                     "desc"
                 ]
             ],
-            "createdRow": function (row, data, dataIndex) {
-                if (data.excess) {
-                    $(row).attr("data-meal-excess", true);
-                } else {
-                    $(row).attr("data-meal-excess", false);
-                }
+            "createdRow": function (row, data) {
+                $(row).attr("data-meal-excess", !! data.excess);
             }
-
         })
     );
 });
@@ -92,18 +80,47 @@ $(function () {
     const startDate = $('#startDate');
     const endDate = $('#endDate');
     if (startDate.length || endDate.length) {
-        $('#startDate, #endDate').datetimepicker({
+        startDate.datetimepicker({
             timepicker: false,
-            format: 'Y-m-d'
+            format: 'Y-m-d',
+            onShow: function(ct) {
+                this.setOptions({
+                    maxDate: endDate.val() ? endDate.val() : false
+                });
+            }
+        });
+
+        endDate.datetimepicker({
+            timepicker: false,
+            format: 'Y-m-d',
+            onShow: function(ct) {
+                this.setOptions({
+                    minDate: startDate.val() ? startDate.val() : false
+                });
+            }
         });
     }
 
     const startTime = $('#startTime');
     const endTime = $('#endTime');
     if (startTime.length || endTime.length) {
-        $('#startTime, #endTime').datetimepicker({
+        startTime.datetimepicker({
             datepicker: false,
-            format: 'H:i'
+            format: 'H:i',
+            onShow: function(ct) {
+                this.setOptions({
+                    maxTime: endTime.val() ? endTime.val() : false
+                });
+            }
+        });
+        endTime.datetimepicker({
+            datepicker: false,
+            format: 'H:i',
+            onShow: function(ct) {
+                this.setOptions({
+                    minTime: startTime.val() ? startTime.val() : false
+                });
+            }
         });
     }
 });

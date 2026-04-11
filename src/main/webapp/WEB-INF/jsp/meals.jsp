@@ -17,15 +17,15 @@
             <div class="card-body pb-0">
                 <form id="filter">
                     <div class="row">
-                        <div class="col-3">
+                        <div class="col-2">
                             <label for="startDate"><spring:message code="meal.startDate"/></label>
                             <input class="form-control" type="text" name="startDate" id="startDate">
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             <label for="endDate"><spring:message code="meal.endDate"/></label>
                             <input class="form-control" type="text" name="endDate" id="endDate">
                         </div>
-                        <div class="col-3">
+                        <div class="offset-2 col-3">
                             <label for="startTime"><spring:message code="meal.startTime"/></label>
                             <input class="form-control" type="text" name="startTime" id="startTime">
                         </div>
@@ -112,9 +112,8 @@
 <jsp:include page="fragments/footer.jsp"/>
 </body>
 <script type="text/javascript">
-    const i18n = {}; // https://learn.javascript.ru/object
-    i18n["addTitle"] = '<spring:message code="meal.add"/>';
-    i18n["editTitle"] = '<spring:message code="meal.edit"/>';
-    <jsp:include page="fragments/i18n.jsp"/>
+    <jsp:include page="fragments/i18n.jsp">
+        <jsp:param name="page" value="meal"/>
+    </jsp:include>
 </script>
 </html>
