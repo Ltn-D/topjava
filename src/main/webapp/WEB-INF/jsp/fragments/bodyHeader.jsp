@@ -26,5 +26,24 @@
                 </button>
             </form:form>
         </sec:authorize>
+
+        <div class="dropdown ml-2">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="languageDropdown" data-toggle="dropdown">
+                ${pageContext.response.locale.language}
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown">
+                <spring:url value="${requestScope['javax.servlet.forward.request_uri']}" var="ruUrl" context="/">
+                    <spring:param name="lang" value="ru"/>
+                </spring:url>
+                <a class="dropdown-item ${pageContext.response.locale.language == 'ru' ? 'active' : ''}"
+                   href="${ruUrl}">Русский</a>
+
+                <spring:url value="${requestScope['javax.servlet.forward.request_uri']}" var="enUrl" context="/">
+                    <spring:param name="lang" value="en"/>
+                </spring:url>
+                <a class="dropdown-item ${pageContext.response.locale.language == 'en' ? 'active' : ''}"
+                   href="${enUrl}">English</a>
+            </div>
+        </div>
     </div>
 </nav>

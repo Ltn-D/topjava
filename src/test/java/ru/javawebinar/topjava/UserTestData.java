@@ -54,4 +54,6 @@ public class UserTestData {
     public static String jsonWithPassword(User user, String passw) {
         return JsonUtil.writeAdditionProps(user, "password", passw);
     }
+
+    public static final String DUPLICATE_USER_ERROR = "Пользователь с такой почтой уже существует";
 }

@@ -6,16 +6,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
+import java.time.Month;
+
+import static java.time.LocalDateTime.of;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -123,5 +129,85 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(user)))
                 .andExpect(status().isOk())
                 .andExpect(TO_MATCHER.contentJson(getTos(meals, user.getCaloriesPerDay())));
+    }
+
+    @Test
+    void updateWithNoValidDateTime() throws Exception {
+        Meal updated = getUpdated();
+        updated.setDateTime(null);
+        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void updateWithNoValidDescription() throws Exception {
+        Meal updated = getUpdated();
+        updated.setDescription("?");
+        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void updateWithNoValidCalories() throws Exception {
+        Meal updated = getUpdated();
+        updated.setCalories(6000);
+        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void createWithNoValidDateTime() throws Exception {
+        Meal newMeal = getNew();
+        newMeal.setDateTime(null);
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(newMeal)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void createWithNoValidDescription() throws Exception {
+        Meal newMeal = getNew();
+        newMeal.setDescription("?");
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(newMeal)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void createWithNoValidCalories() throws Exception {
+        Meal newMeal = getNew();
+        newMeal.setCalories(5);
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(newMeal)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void createWithDuplicateDateTime() throws Exception {
+        Meal newMeal = getNew();
+        newMeal.setDateTime(of(2020, Month.JANUARY, 30, 13, 0));
+        System.out.println(newMeal);
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Accept-Language", "ru")
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(newMeal)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(content().string(containsString(DUPLICATE_ERROR)))
+                .andExpect(status().isConflict());
     }
 }
